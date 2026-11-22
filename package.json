@@ -1,0 +1,38 @@
+{
+  "name": "truforgery",
+  "displayName": "Truforgery",
+  "description": "Review-first coding with the local TrueForge harness",
+  "publisher": "truforgery",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": { "vscode": "^1.99.0", "node": ">=22.14.0" },
+  "extensionKind": ["workspace"],
+  "main": "./src/extension.js",
+  "categories": ["Other"],
+  "capabilities": {
+    "untrustedWorkspaces": { "supported": false },
+    "virtualWorkspaces": { "supported": false }
+  },
+  "contributes": {
+    "commands": [
+      { "command": "truforgery.agent", "title": "Truforgery: Open Agent" },
+      { "command": "truforgery.inline", "title": "Truforgery: Edit Selection" },
+      { "command": "truforgery.undo", "title": "Truforgery: Undo Applied Run" }
+    ],
+    "keybindings": [
+      { "command": "truforgery.inline", "key": "ctrl+alt+i", "mac": "cmd+alt+i",
+        "when": "editorTextFocus && editorHasSelection && !editorReadonly" }
+    ],
+    "configuration": {
+      "title": "Truforgery",
+      "properties": {
+        "truforgery.baseUrl": { "type": "string", "default": "http://127.0.0.1:8790", "scope": "application" },
+        "truforgery.model": { "type": "string", "default": "", "scope": "application",
+          "description": "Model ID from local TrueForge Settings, in provider/model form." },
+        "truforgery.fallbackModel": { "type": "string", "default": "", "scope": "application",
+          "description": "Optional second TrueForge model for failures before any tool review." }
+      }
+    }
+  },
+  "scripts": { "test": "node --test" }
+}

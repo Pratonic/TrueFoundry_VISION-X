@@ -1,0 +1,5 @@
+{
+  "truforgery.baseUrl": "http://127.0.0.1:8790",
+  "truforgery.model": "your-provider/your-tool-capable-model",
+  "truforgery.fallbackModel": ""
+}
