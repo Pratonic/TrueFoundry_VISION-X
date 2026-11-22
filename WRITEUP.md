@@ -4,38 +4,29 @@ VISION-X · PES University · TrueFoundry Forge-a-thon
 
 ## 1. Team
 
-All four members are in their third year at PES University.
-
-| Member | Programme |
-| --- | --- |
-| Pratyush Bhatia | Electronics and Communication Engineering |
-| Amogh Sharma | Computer Science and Engineering |
-| Adarsh Rajesh | Computer Science and Engineering |
-| Ananya Kulgod | Electronics and Communication Engineering |
-
-GitHub handles are pending.
+Pratyush Bhatia, Amogh Sharma, Adarsh Rajesh, Ananya Kulgod
 
 ## 2. Starting point
 
-Built from scratch in JavaScript. The extension uses VS Code’s native diff editor and workspace edit API. TrueForge runs the agent loop.
+From scratch. The extension is plain JavaScript. It uses VS Code’s diff editor for review and TrueForge for the model and tool loop.
 
 ## 3. Architecture on TrueForge
 
-A request opens a TrueForge session using `agent.json` and gets a temporary MCP connection back to VS Code. The agent can search the project, read line ranges, propose edits and run two read-only Git commands. Search and read tools are available at the start of the turn. TrueForge loads the edit and command tools on demand.
+Each request starts a TrueForge session from `agent.json`. A local MCP connection gives the agent access to the project. TrueForge loads the search and read tools at the start of the turn and defers the edit and Git tools until the agent needs them.
 
-Each proposed replacement identifies the exact text to change. If that text is missing or appears twice, the proposal goes back to the agent. TrueForge pauses while the user reviews the hunks. Only accepted hunks enter the staged copy.
+An edit request supplies both the original text and its replacement. During a code review, any matching hunk can be accepted on its own. If the original text has moved and the anchor still matches uniquely, the extension finds it. If the anchor is ambiguous, the agent has to read the file again and choose a longer anchor.
 
-Apply checks the source buffers again because they can change during review. A single `WorkspaceEdit` puts the staged changes into those buffers. The user can save or undo the run. Cancelling before Apply discards the staged changes and closes the MCP connection.
+Accepted hunks stay in memory until Apply. For example, if someone types in one of the files while reviewing a three-file change, Apply catches the stale buffer before editing any of the three. Otherwise, a single `WorkspaceEdit` puts the accepted changes into the editor. The user can still undo the run. Cancel drops the staged changes and ends the TrueForge turn.
 
 ## 4. How context is selected
 
-`@file` comes first. `@symbol` favours definitions and includes references when space allows. For a plain-language request, the search scores words in filenames and source lines and reserves room for source, tests and docs. On Flask 3.1.3, the Task B prompt put `src/flask/cli.py`, `tests/test_cli.py` and `docs/cli.rst` first.
+The Flask CLI task asks for a command, a test and a documentation change in one sentence. In the pinned checkout, the first three search results were `src/flask/cli.py`, `tests/test_cli.py` and `docs/cli.rst`. A first pass that ranked all files together over-selected configuration code. The current search gives source, tests and docs a slot each when they have matches.
 
-The first turn gets up to eight excerpts, with 1,100 characters per excerpt and 9,600 characters for the initial selection. VS Code shows the path and reason for each pick. An inline run starts with the selection and limits edits to that range.
+File mentions take priority. Symbol mentions search definitions and references, and the panel shows why each file was picked. The initial context has room for eight excerpts of up to 1,100 characters each, drawn from a 9,600-character budget. In inline mode, the selection is the initial context and sets the edit boundary.
 
 ## 5. Model setup
 
-Model IDs and credentials live in TrueForge. The extension reads the chosen ID from VS Code settings. A second configured model can take over if the first fails before review begins. The protocol checks ran on TrueForge 0.185.1 against a scripted local endpoint at zero API cost.
+Paste a TrueForge model ID into VS Code’s user settings to switch models. The credentials stay in TrueForge. A configured fallback starts a fresh session if the first model fails before review. Protocol testing used TrueForge 0.185.1 with a scripted local endpoint at zero API cost.
 
 ## 6. Scorecard
 

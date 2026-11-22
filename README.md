@@ -30,7 +30,7 @@ Truforgery is a VS Code extension for proposing and reviewing code edits. TrueFo
 
 ## Round 1 rehearsal
 
-Clone `https://github.com/pallets/flask` outside this project and check out `3.1.3` (`22d92470`). Create a Python virtual environment in the Flask checkout. Activate it and run `python -m pip install -e . -r requirements/tests.txt`.
+Clone `https://github.com/pallets/flask` outside this project and check out `3.1.3` (`22d92470`). Create and activate a Python virtual environment in the Flask checkout. Install the checkout and compatible test dependencies with `python -m pip install -e ".[dotenv]" "pytest==8.3.5" "click==8.1.8"`.
 
 1. **Task A.** In `src/flask/helpers.py`, select `get_debug_flag`. Ask the extension to treat `off` and `n` as false case-insensitively and update the docstring to list the false values. Review, Apply, and save. In PowerShell run `$env:FLASK_DEBUG = 'off'` and `python -c "from flask.helpers import get_debug_flag; print(get_debug_flag())"`. The expected output is `False`. Remove the variable with `Remove-Item Env:FLASK_DEBUG`.
 2. **Task B.** In the agent panel, request a built-in `flask config` command that prints loaded configuration as JSON and masks any key containing `SECRET`, `PASSWORD`, `TOKEN`, or `KEY` with `***`. Ask for the help entry, a test, and documentation alongside the built-in commands. Keep filenames out of the prompt. Show the context list and the TrueForge session. Review changes to at least three files, Apply, and save. Run `python -m pytest tests/test_cli.py -q`, `python -m flask --help`, and `python -m flask --app YOUR_APP config`. Use a small app with dummy values in the keys you want to show.
