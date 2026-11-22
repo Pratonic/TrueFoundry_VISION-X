@@ -14,12 +14,17 @@ const SUPPORT_FILE = /(?:^|\/)(?:_static|static|fixtures|test_apps)(?:\/|$)|\.(?
 function git(root, args, signal, limit = 2_000_000) {
   return new Promise((resolve, reject) => {
     const timeout = AbortSignal.timeout(6000);
+    // Resolve the repository from cwd. Editor launchers can inherit incomplete Git overrides.
+    const env = Object.fromEntries(Object.entries(process.env).filter(([key]) =>
+      !/^GIT_(?:CONFIG_COUNT|CONFIG_PARAMETERS|CONFIG_KEY_\d+|CONFIG_VALUE_\d+|DIR|WORK_TREE|COMMON_DIR|INDEX_FILE)$/i.test(key)));
+    env.GIT_TERMINAL_PROMPT = '0';
+    env.GIT_PAGER = 'cat';
     const child = spawn('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', ...args], {
       cwd: root,
       shell: false,
       windowsHide: true,
       signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
-      env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_PAGER: 'cat' }
+      env
     });
     const chunks = [];
     let size = 0;

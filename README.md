@@ -42,6 +42,6 @@ The agent's command tool accepts `git status --short` or `git diff --stat`. Run 
 
 Run `npm test` with Node 22. The workspace tools support existing text files and cap search output, read ranges, and edit size. Automatic retrieval uses Git-tracked files. Explicit file mentions work for ordinary local text files that pass the path filter. A run is limited to one folder. Undo history lives in the extension host's memory.
 
-Truforgery was built from scratch. It uses VS Code's extension API and the TrueForge HTTP API. The Round 1 write-up draft is in `WRITEUP.md` and `WRITEUP.pdf`. Add the team details and demo timestamps after recording.
+Truforgery was built from scratch. It uses VS Code's extension API and the TrueForge HTTP API. See the [technical report](WRITEUP.pdf) or its [editable source](WRITEUP.md). The [video walkthrough](Truforgery-demo.mp4) shows the VS Code checks with a scripted local endpoint and the separate Flask CLI verification.
 
 Sources: [TrueForge documentation](https://trueforge.dev/api/overview), [Techfest competition brief](https://techfest.org/competitions/forge-a-thon).
